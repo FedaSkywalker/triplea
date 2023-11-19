@@ -91,26 +91,36 @@ public class MapPanel extends ImageScrollerLargeView {
   private final List<MouseOverUnitListener> mouseOverUnitsListeners = new ArrayList<>();
   private final List<ZoomMapListener> zoomMapListeners = new ArrayList<>();
   private GameData gameData;
+
+
+  public MapPanel() {
+    super(new Dimension(100,100), new ImageScrollModel());
+  }
+
+  public List<ZoomMapListener> getZoomMapListeners() {
+    return zoomMapListeners;
+  }
+
   // the territory that the mouse is currently over
   @Getter private @Nullable Territory currentTerritory;
 
   private @Nullable Territory highlightedTerritory;
   private final TerritoryHighlighter territoryHighlighter = new TerritoryHighlighter();
-  private final ImageScrollerSmallView smallView;
+  private  ImageScrollerSmallView smallView;
   // units the mouse is currently over
   private Tuple<Territory, List<Unit>> currentUnits;
-  private final SmallMapImageManager smallMapImageManager;
+  private  SmallMapImageManager smallMapImageManager;
   private RouteDescription routeDescription;
-  private final TileManager tileManager;
+  private  TileManager tileManager;
   private BufferedImage mouseShadowImage = null;
   private String movementLeftForCurrentUnits = "";
   private ResourceCollection movementFuelCost;
-  private final UiContext uiContext;
+  private  UiContext uiContext;
   private final ExecutorService executor =
       Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
   @Getter private Collection<Collection<Unit>> highlightedUnits = List.of();
   private Cursor hiddenCursor = null;
-  private final MapRouteDrawer routeDrawer;
+  private  MapRouteDrawer routeDrawer;
   private Set<Territory> countriesToUpdate = new HashSet<>();
   private final Object countriesToUpdateLock = new Object();
 
@@ -854,8 +864,10 @@ public class MapPanel extends ImageScrollerLargeView {
     zoomMapListeners.forEach(
         (zoomMapListener -> zoomMapListener.zoomMapChanged((int) (scale * 100))));
     // setScale will check bounds, and normalize the scale correctly
-    uiContext.setScale(scale);
-    repaint();
+    if (uiContext != null) {
+      uiContext.setScale(scale);
+      repaint();
+    }
   }
 
   public void initSmallMap() {
